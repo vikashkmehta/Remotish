@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Remotish</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-primary: #0f0f23;
+        --bg-secondary: #1a1a2e;
+        --bg-card: #16213e;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --accent: #e50914;
+        --accent-hover: #ff0a16;
+        --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        --border-radius: 12px;
+      }
+
+      [data-theme="light"] {
+        --bg-primary: #f8fafc;
+        --bg-secondary: #ffffff;
+        --bg-card: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        transition: all 0.3s ease;
+        overflow-x: hidden;
+      }
+
+      /* Navigation */
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: rgba(15, 15, 35, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+
+      [data-theme="light"] .navbar {
+        background: rgba(248, 250, 252, 0.95);
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .search-box {
+        background: var(--bg-card);
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        color: var(--text-primary);
+        outline: none;
+        transition: all 0.3s ease;
+        width: 200px;
+      }
+
+      .search-box:focus {
+        box-shadow: 0 0 0 2px var(--accent);
+        transform: scale(1.02);
+      }
+
+      .theme-toggle {
+        background: var(--bg-card);
+        border: none;
+        padding: 0.5rem;
+        border-radius: 50%;
+        color: var(--text-primary);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1.2rem;
+      }
+
+      .theme-toggle:hover {
+        background: var(--accent);
+        transform: scale(1.1);
+      }
+
+      /* Hero Section */
+      .hero {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(45deg, #667eea, #764ba2, #e50914);
+        background-size: 400% 400%;
+        animation: gradientMove 8s ease infinite;
+        position: relative;
+        overflow: hidden;
+      }
+
+      @keyframes gradientMove {
+        0%,
+        100% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .hero-content {
+        text-align: center;
+        z-index: 2;
+        animation: fadeInUp 1s ease;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero h1 {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .hero p {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      .cta-button {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid white;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .cta-button:hover {
+        background: white;
+        color: #667eea;
+        transform: translateY(-2px);
+      }
+
+      /* Floating particles */
+      .particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      /* Featured Companies Carousel */
+      .featured-section {
+        padding: 4rem 2rem;
+        background: var(--bg-secondary);
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .carousel-container {
+        position: relative;
+        max-width: 1400px;
+        margin: 0 auto;
+        overflow: hidden;
+      }
+
+      .carousel {
+        display: flex;
+        transition: transform 0.5s ease;
+        gap: 2rem;
+      }
+
+      .featured-card {
+        min-width: 350px;
+        height: 200px;
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .featured-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transition: left 0.5s ease;
+      }
+
+      .featured-card:hover::before {
+        left: 100%;
+      }
+
+      .featured-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .company-logo {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: var(--gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        color: white;
+      }
+
+      .carousel-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      .carousel-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .carousel-btn:hover {
+        background: var(--accent-hover);
+        transform: scale(1.05);
+      }
+
+      /* Companies Grid */
+      .companies-section {
+        padding: 4rem 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .filter-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 3rem;
+        flex-wrap: wrap;
+      }
+
+      .filter-tab {
+        background: var(--bg-card);
+        color: var(--text-secondary);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filter-tab.active,
+      .filter-tab:hover {
+        background: var(--accent);
+        color: white;
+        transform: translateY(-2px);
+      }
+
+      .companies-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .company-card {
+        background: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .company-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+
+      .company-card:hover::before {
+        transform: scaleX(1);
+      }
+
+      .company-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      }
+
+      .company-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .company-info h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .company-region {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .region-badge {
+        background: var(--gradient);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .company-link {
+        color: var(--accent);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .company-link:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero p {
+          font-size: 1.2rem;
+        }
+
+        .navbar {
+          padding: 1rem;
+        }
+
+        .search-box {
+          width: 150px;
+        }
+
+        .companies-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .featured-card {
+          min-width: 280px;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body data-theme="dark">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="logo">REMOTISH</div>
+        <div class="nav-controls">
+          <input
+            type="text"
+            class="search-box"
+            placeholder="Search companies..."
+            id="searchInput"
+          />
+          <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+      <div class="particles" id="particles"></div>
+      <div class="hero-content">
+        <h1>Discover Remote Opportunities</h1>
+        <p>Your gateway to global remote-friendly companies</p>
+        <button class="cta-button" onclick="scrollToCompanies()">
+          Explore Companies
+        </button>
+      </div>
+    </section>
+
+    <!-- Featured Companies Carousel -->
+    <section class="featured-section">
+      <h2 class="section-title">Featured Companies</h2>
+      <div class="carousel-container">
+        <div class="carousel" id="carousel">
+          <!-- Carousel items will be populated by JavaScript -->
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" onclick="prevSlide()">←</button>
+          <button class="carousel-btn" onclick="nextSlide()">→</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Companies Section -->
+    <section class="companies-section" id="companies">
+      <h2 class="section-title">All Companies</h2>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-region="all">All Regions</button>
+        <button class="filter-tab" data-region="worldwide">Worldwide</button>
+        <button class="filter-tab" data-region="usa">USA</button>
+        <button class="filter-tab" data-region="europe">Europe</button>
+        <button class="filter-tab" data-region="americas">Americas</button>
+        <button class="filter-tab" data-region="germany">Germany</button>
+      </div>
+
+      <div class="companies-grid" id="companiesGrid">
+        <!-- Companies will be populated by JavaScript -->
+      </div>
+    </section>
+
+    <script>
+      // Company data
+      let companies = [];
+      let filteredCompanies = [];
+
+      fetch("companies.json")
+        .then((res) => res.json())
+        .then((data) => {
+          companies = data;
+          filteredCompanies = [...companies];
+          populateCarousel();
+          populateCompanies();
+        })
+        .catch((error) => console.error("Failed to load companies:", error));
+
+
+      // Theme toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const body = document.body;
+
+      themeToggle.addEventListener("click", () => {
+        const currentTheme = body.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        body.setAttribute("data-theme", newTheme);
+        themeToggle.textContent = newTheme === "dark" ? "🌙" : "☀️";
+      });
+
+      // Generate particles
+      function generateParticles() {
+        const particlesContainer = document.getElementById("particles");
+        for (let i = 0; i < 50; i++) {
+          const particle = document.createElement("div");
+          particle.classList.add("particle");
+          particle.style.left = Math.random() * 100 + "%";
+          particle.style.top = Math.random() * 100 + "%";
+          particle.style.animationDelay = Math.random() * 6 + "s";
+          particlesContainer.appendChild(particle);
+        }
+      }
+
+      // Create company logo
+      function createLogo(name) {
+        return name.charAt(0).toUpperCase();
+      }
+
+      // Populate carousel
+      function populateCarousel() {
+        const carousel = document.getElementById("carousel");
+        const featuredCompanies = companies.slice(0, 8);
+
+        carousel.innerHTML = featuredCompanies
+          .map(
+            (company) => `
+                <div class="featured-card" onclick="window.open('${
+                  company.website
+                }', '_blank')">
+                    <div class="company-logo">${createLogo(company.name)}</div>
+                    <h3>${company.name}</h3>
+                    <p class="company-region">📍 ${company.region}</p>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Populate companies grid
+      function populateCompanies(companiesToShow = companies) {
+        const grid = document.getElementById("companiesGrid");
+        grid.innerHTML = companiesToShow
+          .map(
+            (company) => `
+                <div class="company-card" onclick="window.open('${
+                  company.website
+                }', '_blank')">
+                    <div class="company-header">
+                        <div class="company-logo">${createLogo(
+                          company.name
+                        )}</div>
+                        <div class="company-info">
+                            <h3>${company.name}</h3>
+                            <div class="company-region">
+                                <span class="region-badge">${
+                                  company.region
+                                }</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="${
+                      company.website
+                    }" class="company-link" target="_blank" onclick="event.stopPropagation()">
+                        Visit Website →
+                    </a>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Carousel controls
+      function nextSlide() {
+        const carousel = document.getElementById("carousel");
+        const cardWidth = 350 + 32; // card width + gap
+        currentSlide = (currentSlide + 1) % Math.max(1, companies.length - 3);
+        carousel.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
+      }
+
+      function prevSlide() {
+        const carousel = document.getElementById("carousel");
+        const cardWidth = 350 + 32;
+        currentSlide =
+          currentSlide === 0
+            ? Math.max(0, companies.length - 4)
+            : currentSlide - 1;
+        carousel.style.transform = `translateX(-${currentSlide * cardWidth}px)`;
+      }
+
+      // Filter functionality
+      document.querySelectorAll(".filter-tab").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document
+            .querySelectorAll(".filter-tab")
+            .forEach((t) => t.classList.remove("active"));
+          tab.classList.add("active");
+
+          const region = tab.getAttribute("data-region");
+          if (region === "all") {
+            filteredCompanies = [...companies];
+          } else {
+            filteredCompanies = companies.filter((company) =>
+              company.region.toLowerCase().includes(region.toLowerCase())
+            );
+          }
+          populateCompanies(filteredCompanies);
+        });
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filtered = filteredCompanies.filter(
+          (company) =>
+            company.name.toLowerCase().includes(searchTerm) ||
+            company.region.toLowerCase().includes(searchTerm)
+        );
+        populateCompanies(filtered);
+      });
+
+      // Smooth scroll to companies
+      function scrollToCompanies() {
+        document
+          .getElementById("companies")
+          .scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Auto-advance carousel
+      setInterval(nextSlide, 4000);
+
+      // Initialize
+      generateParticles();
+      populateCarousel();
+      populateCompanies();
+
+      // Navbar scroll effect
+      window.addEventListener("scroll", () => {
+        const navbar = document.querySelector(".navbar");
+        if (window.scrollY > 100) {
+          navbar.style.background =
+            body.getAttribute("data-theme") === "dark"
+              ? "rgba(15, 15, 35, 0.98)"
+              : "rgba(248, 250, 252, 0.98)";
+        } else {
+          navbar.style.background =
+            body.getAttribute("data-theme") === "dark"
+              ? "rgba(15, 15, 35, 0.95)"
+              : "rgba(248, 250, 252, 0.95)";
+        }
+      });
+    </script>
+  </body>
+</html>
